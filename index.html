@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuis Informatika (Berpikir Komputasional)- Kelas 9 </title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 20px 15px;
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      color: #222;
+    }
+
+    .created-by {
+      position: absolute;
+      bottom: 20px;
+      right: 25px;
+      font-size: 14px;
+      color: #d7e0e4;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 25px;
+      max-width: 750px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .container::-webkit-scrollbar-track {
+      background: #f0f0f0;
+      border-radius: 4px;
+    }
+
+    .container::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 4px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #3a2e7a;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #555;
+      margin-bottom: 15px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .info-bar {
+      display: flex;
+      justify-content: space-between;
+      background: #eef0ff;
+      padding: 12px 18px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      font-weight: 700;
+      font-size: 16px;
+      color: #2c2c54;
+      border: 2px solid #d0d5ff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .progress {
+      height: 10px;
+      background: #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      width: 0%;
+      transition: width .4s;
+    }
+
+    .question {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 15px;
+      line-height: 1.5;
+      color: #2c2c54;
+      background: #b9f5b0;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .option {
+      padding: 14px 16px;
+      background: #5a15ef;
+      border: 2px solid #e0dcf5;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: .2s;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .option:hover:not(:disabled) {
+      background: #d62a55;
+      transform: translateX(5px);
+    }
+
+    .option:disabled {
+      cursor: not-allowed;
+      opacity: 0.9;
+    }
+
+    .option.correct {
+      background: #b9f5b0;
+      border-color: #2e7d32;
+      color: #1b5e20;
+      font-weight: 500;
+    }
+
+    .option.wrong {
+      background: #ffb3b3;
+      border-color: #c62828;
+      color: #7f0000;
+      font-weight: 500;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #ffffff;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 15px;
+      transition: .2s;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, .25);
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-small {
+      flex: 0 0 auto;
+      padding: 12px 16px;
+      font-size: 14px;
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+
+    .feedback {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-align: center;
+      display: none;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.benar {
+      background: #b9f5b0;
+      color: #1b5e20;
+      border: 2px solid #2e7d32;
+    }
+
+    .feedback.salah {
+      background: #ffb3b3;
+      color: #7f0000;
+      border: 2px solid #c62828;
+    }
+
+    .start-screen,
+    .end-screen {
+      text-align: center;
+      padding: 15px 10px;
+    }
+
+    .end-screen h2 {
+      color: #3a2e7a;
+      margin-bottom: 10px;
+      font-size: 26px;
+    }
+
+    .score-big {
+      font-size: 60px;
+      font-weight: 900;
+      color: #764ba2;
+      margin: 10px 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, .1);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .music-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: #fff;
+      border: 2px solid #764ba2;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, .2);
+      z-index: 100;
+    }
+
+    p {
+      color: #333;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .info-box {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      color: #856404;
+      padding: 12px;
+      border-radius: 10px;
+      margin: 15px 0;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .info-box strong {
+      color: #856404;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 18px;
+        max-height: calc(100vh - 20px);
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .question {
+        font-size: 16px;
+        padding: 12px;
+      }
+
+      .option {
+        font-size: 15px;
+        padding: 12px 14px;
+      }
+
+      .info-bar {
+        font-size: 14px;
+        padding: 10px 14px;
+      }
+
+      .score-big {
+        font-size: 50px;
+      }
+
+      .music-toggle {
+        width: 42px;
+        height: 42px;
+        font-size: 18px;
+        top: 10px;
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <button class="music-toggle" id="musicBtn" title="Musik">🔇</button>
+
+  <div class="created-by">Created by Heru Yusro</div>
+
+  <div class="container" id="mainContainer">
+    <div id="startScreen" class="start-screen">
+      <h1>🌱 Kuis Informatika Kelas 9</h1>
+      <p class="subtitle">Berpikir Komputasional</p>
+      <div class="info-box">
+        <strong>📱 Info Penting untuk HP Android:</strong><br>
+        • Pastikan <strong>volume media HP tidak silent/mute</strong><br>
+        • Tekan <strong>"Test Suara"</strong> untuk mengaktifkan audio<br>
+        • Izinkan suara jika browser meminta
+      </div>
+      <p style="margin:15px 0;">Jawab 50 pertanyaan. Skor skala <strong>10 - 100</strong>.</p>
+      <button id="testBtn" onclick="testSuara()"
+        style="margin-bottom:10px; background: linear-gradient(135deg, #11998e, #38ef7d);">🔊 Test Suara Dulu</button>
+      <button onclick="mulaiKuis()">🎯 Mulai Kuis</button>
+    </div>
+
+    <div id="quizScreen" class="hidden">
+      <h1>🌱 Berpikir Komputasional</h1>
+      <div class="info-bar">
+        <span>Soal: <span id="qNum">1</span>/50</span>
+        <span>Skor: <span id="score">2</span></span>
+      </div>
+      <div class="progress">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="question" id="questionText"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="controls">
+        <button class="btn-small" onclick="bacaSoal()">🔊 Baca Lagi</button>
+        <button id="nextBtn" onclick="nextSoal()" disabled>Lanjut ➡</button>
+      </div>
+    </div>
+
+    <div id="endScreen" class="end-screen hidden">
+      <h2>🎉 Kuis Selesai!</h2>
+      <p>Skor akhir kamu:</p>
+      <div class="score-big" id="finalScore">2</div>
+      <p id="pesanAkhir" style="margin-bottom:15px;"></p>
+      <button onclick="location.reload()">🔄 Ulangi Kuis</button>
+    </div>
+  </div>
+
+  <script>
+    // ====== 50 PERTANYAAN ======
+    const soalAsli = [
+{
+        q: "Apa yang dimaksud dengan berpikir komputasional?",
+        o: [
+          "Cara berpikir untuk menyelesaikan masalah secara sistematis",
+          "Cara menggunakan komputer untuk bermain game",
+          "Cara menghafal semua program komputer",
+          "Cara memperbaiki perangkat keras komputer"
+        ],
+        a: 0
+      },
+      {
+        q: "Berpikir komputasional memiliki empat konsep utama. Manakah yang termasuk konsep tersebut?",
+        o: [
+          "Mengetik, mencetak, menyimpan, dan menghapus",
+          "Dekomposisi, pengenalan pola, abstraksi, dan algoritma",
+          "Monitor, keyboard, mouse, dan printer",
+          "Input, monitor, internet, dan aplikasi"
+        ],
+        a: 1
+      },
+      {
+        q: "Apa yang dimaksud dengan dekomposisi?",
+        o: [
+          "Menghapus data yang tidak digunakan",
+          "Menggabungkan beberapa masalah menjadi satu",
+          "Memecah masalah besar menjadi bagian-bagian kecil",
+          "Mengubah komputer menjadi perangkat baru"
+        ],
+        a: 2
+      },
+      {
+        q: "Seorang siswa membagi tugas membuat majalah kelas menjadi penulisan artikel, desain, pengumpulan foto, dan penyuntingan. Ini merupakan contoh...",
+        o: [
+          "Abstraksi",
+          "Pengenalan pola",
+          "Algoritma",
+          "Dekomposisi"
+        ],
+        a: 3
+      },
+      {
+        q: "Apa tujuan utama pengenalan pola dalam berpikir komputasional?",
+        o: [
+          "Menemukan kesamaan atau keteraturan dari beberapa masalah",
+          "Menghapus semua informasi yang tersedia",
+          "Membuat masalah menjadi lebih rumit",
+          "Mengganti perangkat komputer"
+        ],
+        a: 0
+      },
+      {
+        q: "Deret angka 2, 4, 6, 8, ... memiliki pola tertentu. Angka berikutnya adalah...",
+        o: [
+          "9",
+          "10",
+          "11",
+          "12"
+        ],
+        a: 1
+      },
+      {
+        q: "Dalam berpikir komputasional, abstraksi berarti...",
+        o: [
+          "Menyalin seluruh informasi tanpa perubahan",
+          "Membagi masalah menjadi banyak bagian",
+          "Memusatkan perhatian pada informasi penting dan mengabaikan detail yang tidak relevan",
+          "Menjalankan semua perintah secara acak"
+        ],
+        a: 2
+      },
+      {
+        q: "Ketika membuat peta sederhana sekolah, seorang siswa hanya menampilkan ruang kelas, kantor guru, dan gerbang. Ia tidak menggambar setiap kursi. Ini merupakan contoh...",
+        o: [
+          "Pengulangan",
+          "Pengenalan pola",
+          "Dekomposisi",
+          "Abstraksi"
+        ],
+        a: 3
+      },
+      {
+        q: "Apa yang dimaksud dengan algoritma?",
+        o: [
+          "Urutan langkah-langkah logis untuk menyelesaikan masalah",
+          "Perangkat untuk menyimpan data",
+          "Bahasa yang hanya digunakan untuk bermain game",
+          "Kumpulan gambar pada komputer"
+        ],
+        a: 0
+      },
+      {
+        q: "Urutan algoritma yang benar untuk membuat teh adalah...",
+        o: [
+          "Minum teh, merebus air, memasukkan teh",
+          "Merebus air, memasukkan teh, menuangkan air panas, menambahkan gula jika diperlukan",
+          "Menambahkan gula, meminum air, lalu merebus air",
+          "Menuangkan air dingin, membuang gelas, lalu memasukkan teh"
+        ],
+        a: 1
+      },
+      {
+        q: "Seorang siswa ingin mencari buku di perpustakaan. Ia memeriksa katalog terlebih dahulu, lalu menuju rak yang sesuai. Strategi ini menunjukkan...",
+        o: [
+          "Penghapusan data",
+          "Pengacakan langkah",
+          "Penyusunan langkah penyelesaian secara sistematis",
+          "Penggantian perangkat"
+        ],
+        a: 2
+      },
+      {
+        q: "Manakah contoh masalah yang cocok diselesaikan menggunakan dekomposisi?",
+        o: [
+          "Menentukan warna favorit",
+          "Menghafal satu huruf",
+          "Melihat satu gambar tanpa tujuan",
+          "Mengelola acara sekolah yang terdiri atas banyak kegiatan"
+        ],
+        a: 3
+      },
+      {
+        q: "Seorang siswa memperhatikan bahwa setiap hari Senin, Rabu, dan Jumat ia mengikuti ekstrakurikuler. Kesamaan jadwal tersebut menunjukkan...",
+        o: [
+          "Pengenalan pola",
+          "Abstraksi",
+          "Dekomposisi",
+          "Penghapusan"
+        ],
+        a: 0
+      },
+      {
+        q: "Pola bilangan 3, 6, 12, 24, ... memiliki angka berikutnya...",
+        o: [
+          "30",
+          "48",
+          "36",
+          "42"
+        ],
+        a: 1
+      },
+      {
+        q: "Mengapa algoritma perlu disusun dengan urutan yang benar?",
+        o: [
+          "Agar langkahnya selalu lebih panjang",
+          "Agar komputer tidak perlu menerima input",
+          "Agar penyelesaian masalah berjalan sesuai tujuan",
+          "Agar hasilnya selalu acak"
+        ],
+        a: 2
+      },
+      {
+        q: "Dalam algoritma, simbol belah ketupat pada flowchart biasanya digunakan untuk...",
+        o: [
+          "Menunjukkan awal program saja",
+          "Menampilkan hasil cetakan",
+          "Menunjukkan proses perhitungan biasa",
+          "Menunjukkan keputusan atau kondisi"
+        ],
+        a: 3
+      },
+      {
+        q: "Simbol oval pada flowchart umumnya menunjukkan...",
+        o: [
+          "Mulai atau selesai",
+          "Proses perhitungan",
+          "Pengambilan keputusan",
+          "Penyimpanan permanen"
+        ],
+        a: 0
+      },
+      {
+        q: "Simbol persegi panjang pada flowchart umumnya digunakan untuk...",
+        o: [
+          "Menunjukkan arah aliran saja",
+          "Menunjukkan proses atau instruksi",
+          "Menunjukkan o benar atau salah",
+          "Menandai akhir program saja"
+        ],
+        a: 1
+      },
+      {
+        q: "Dalam pseudocode, perintah INPUT biasanya digunakan untuk...",
+        o: [
+          "Menghentikan komputer",
+          "Menghapus program",
+          "Menerima data dari pengguna",
+          "Mencetak dokumen"
+        ],
+        a: 2
+      },
+      {
+        q: "Perintah OUTPUT dalam algoritma digunakan untuk...",
+        o: [
+          "Menerima data dari keyboard",
+          "Menghapus seluruh variabel",
+          "Memulai pengulangan",
+          "Menampilkan hasil atau informasi"
+        ],
+        a: 3
+      },
+      {
+        q: "Perhatikan pseudocode berikut: INPUT a, b; hasil = a + b; OUTPUT hasil. Jika a = 5 dan b = 7, hasilnya adalah...",
+        o: [
+          "12",
+          "35",
+          "2",
+          "57"
+        ],
+        a: 0
+      },
+      {
+        q: "Jika x = 10 lalu x = x - 3, nilai akhir x adalah...",
+        o: [
+          "13",
+          "7",
+          "3",
+          "10"
+        ],
+        a: 1
+      },
+      {
+        q: "Sebuah program memeriksa apakah nilai siswa minimal 75. Jika nilai 80, kondisi nilai >= 75 menghasilkan...",
+        o: [
+          "Salah",
+          "Tidak dapat ditentukan",
+          "Benar",
+          "Program pasti berhenti"
+        ],
+        a: 2
+      },
+      {
+        q: "Dalam algoritma, struktur percabangan digunakan ketika...",
+        o: [
+          "Semua instruksi harus dijalankan berulang kali",
+          "Tidak ada data yang diproses",
+          "Program tidak membutuhkan keputusan",
+          "Tindakan yang dilakukan bergantung pada suatu kondisi"
+        ],
+        a: 3
+      },
+      {
+        q: "Jika kondisi IF nilai >= 75 THEN dinyatakan benar, tindakan yang sesuai adalah...",
+        o: [
+          "Menjalankan instruksi pada bagian THEN",
+          "Selalu menjalankan bagian ELSE saja",
+          "Menghapus nilai siswa",
+          "Mengulang program tanpa batas"
+        ],
+        a: 0
+      },
+      {
+        q: "Apa fungsi perulangan (loop) dalam algoritma?",
+        o: [
+          "Menghapus semua perintah",
+          "Menjalankan instruksi berulang kali sesuai aturan",
+          "Mengganti nama komputer",
+          "Membuat semua kondisi bernilai salah"
+        ],
+        a: 1
+      },
+      {
+        q: "Sebuah perulangan mencetak kata 'Halo' sebanyak 4 kali. Berapa kali kata tersebut ditampilkan?",
+        o: [
+          "2 kali",
+          "3 kali",
+          "4 kali",
+          "5 kali"
+        ],
+        a: 2
+      },
+      {
+        q: "Apa yang dimaksud dengan debugging?",
+        o: [
+          "Menambahkan gambar ke dokumen",
+          "Membeli perangkat komputer",
+          "Mengubah semua data menjadi angka",
+          "Mencari dan memperbaiki kesalahan dalam program"
+        ],
+        a: 3
+      },
+      {
+        q: "Program menghasilkan nilai yang salah karena operator penjumlahan ditulis sebagai pengurangan. Kesalahan ini termasuk...",
+        o: [
+          "Kesalahan logika",
+          "Kesalahan warna tampilan",
+          "Kesalahan perangkat keras",
+          "Kesalahan koneksi listrik"
+        ],
+        a: 0
+      },
+      {
+        q: "Mengapa program perlu diuji menggunakan beberapa data masukan?",
+        o: [
+          "Agar ukuran file selalu bertambah",
+          "Untuk mengetahui apakah program bekerja dengan benar pada berbagai kondisi",
+          "Agar kode menjadi lebih sulit dibaca",
+          "Untuk menghilangkan semua variabel"
+        ],
+        a: 1
+      },
+      {
+        q: "Ketika menyusun jadwal pelajaran, informasi yang paling relevan adalah...",
+        o: [
+          "Warna tas setiap siswa",
+          "Merek sepatu guru",
+          "Nama mata pelajaran, hari, jam, dan ruang kelas",
+          "Makanan favorit seluruh siswa"
+        ],
+        a: 2
+      },
+      {
+        q: "Seorang siswa membuat daftar nilai dan mengelompokkan siswa berdasarkan nilai yang sama. Konsep yang paling berkaitan dengan pencarian kesamaan adalah...",
+        o: [
+          "Enkripsi",
+          "Instalasi",
+          "Penghapusan",
+          "Pengenalan pola"
+        ],
+        a: 3
+      },
+      {
+        q: "Apa manfaat membuat masalah menjadi bagian-bagian kecil sebelum menyelesaikannya?",
+        o: [
+          "Masalah lebih mudah dipahami dan dikelola",
+          "Semua masalah otomatis hilang",
+          "Penyelesaian pasti tidak membutuhkan waktu",
+          "Informasi penting tidak perlu diperiksa"
+        ],
+        a: 0
+      },
+      {
+        q: "Dalam sebuah aplikasi perpustakaan, proses peminjaman dibagi menjadi memilih buku, memeriksa ketersediaan, mencatat peminjam, dan menentukan tanggal pengembalian. Ini merupakan...",
+        o: [
+          "Abstraksi visual",
+          "Dekomposisi masalah",
+          "Pengacakan algoritma",
+          "Penghapusan pola"
+        ],
+        a: 1
+      },
+      {
+        q: "Deret 1, 4, 9, 16, 25, ... memiliki angka berikutnya...",
+        o: [
+          "30",
+          "35",
+          "36",
+          "40"
+        ],
+        a: 2
+      },
+      {
+        q: "Perhatikan pola huruf berikut: A, C, E, G, ... Huruf berikutnya adalah...",
+        o: [
+          "H",
+          "I",
+          "J",
+          "K"
+        ],
+        a: 3
+      },
+      {
+        q: "Jika sebuah algoritma memiliki langkah yang tidak diperlukan dan tidak memengaruhi hasil, tindakan terbaik adalah...",
+        o: [
+          "Mengevaluasi dan menghapus langkah yang tidak relevan",
+          "Menambahkan lebih banyak langkah yang sama",
+          "Mengacak urutan seluruh langkah",
+          "Menghentikan semua proses tanpa pemeriksaan"
+        ],
+        a: 0
+      },
+      {
+        q: "Apa yang dimaksud dengan efisiensi algoritma?",
+        o: [
+          "Banyaknya warna pada flowchart",
+          "Kemampuan menyelesaikan masalah dengan penggunaan waktu dan sumber daya yang sesuai",
+          "Jumlah halaman dalam buku informatika",
+          "Panjang nama setiap variabel"
+        ],
+        a: 1
+      },
+      {
+        q: "Seorang siswa mencari nama dalam daftar yang sudah diurutkan berdasarkan abjad. Mengapa pengurutan membantu pencarian?",
+        o: [
+          "Karena seluruh nama otomatis menjadi sama",
+          "Karena daftar tidak lagi membutuhkan data",
+          "Karena posisi data lebih teratur sehingga pencarian dapat dilakukan lebih terarah",
+          "Karena semua nama berubah menjadi angka"
+        ],
+        a: 2
+      },
+      {
+        q: "Dalam pencarian biner pada daftar yang sudah terurut, langkah awal yang umum dilakukan adalah...",
+        o: [
+          "Memeriksa seluruh data sekaligus",
+          "Menghapus separuh data tanpa memeriksa",
+          "Mengurutkan data secara acak",
+          "Memeriksa elemen tengah dan membandingkannya dengan target"
+        ],
+        a: 3
+      },
+      {
+        q: "Apa tujuan penggunaan variabel dalam algoritma atau program?",
+        o: [
+          "Menyimpan nilai atau data yang dapat digunakan selama program berjalan",
+          "Menggantikan semua perangkat keras",
+          "Menghapus setiap instruksi",
+          "Membuat hasil program selalu tetap"
+        ],
+        a: 0
+      },
+      {
+        q: "Jika p = 4 dan q = 3, nilai dari p * q + 2 adalah...",
+        o: [
+          "14",
+          "20",
+          "24",
+          "18"
+        ],
+        a: 1
+      },
+      {
+        q: "Operator perbandingan == dalam banyak bahasa pemrograman digunakan untuk...",
+        o: [
+          "Menjumlahkan dua bilangan",
+          "Membagi dua bilangan",
+          "Memeriksa apakah dua nilai sama",
+          "Mengubah teks menjadi gambar"
+        ],
+        a: 2
+      },
+      {
+        q: "Sebuah program menampilkan 'Lulus' jika nilai >= 75 dan 'Tidak Lulus' jika nilai < 75. Jika nilai siswa 70, hasil yang benar adalah...",
+        o: [
+          "Lulus",
+          "Nilai tidak tersedia",
+          "Kedua pesan ditampilkan sekaligus",
+          "Tidak Lulus"
+        ],
+        a: 3
+      },
+      {
+        q: "Dalam membuat sistem pemesanan makanan, contoh abstraksi yang tepat adalah...",
+        o: [
+          "Memusatkan perhatian pada menu, jumlah pesanan, harga, dan alamat pengiriman",
+          "Mencatat warna pakaian setiap pelanggan meskipun tidak diperlukan",
+          "Mengumpulkan semua informasi tanpa tujuan",
+          "Menghapus informasi harga makanan"
+        ],
+        a: 0
+      },
+      {
+        q: "Ketika beberapa q matematika dapat diselesaikan menggunakan langkah yang sama, strategi yang bermanfaat adalah...",
+        o: [
+          "Membuat langkah baru secara acak untuk setiap q",
+          "Mengenali pola penyelesaian yang dapat digunakan kembali",
+          "Menghindari semua perhitungan",
+          "Mengubah q menjadi gambar tanpa dianalisis"
+        ],
+        a: 1
+      },
+      {
+        q: "Apa yang dimaksud dengan generalisasi pola?",
+        o: [
+          "Menghapus semua pola yang ditemukan",
+          "Membuat masalah menjadi lebih khusus tanpa alasan",
+          "Menggunakan pola yang ditemukan untuk memahami atau menyelesaikan kasus lain yang serupa",
+          "Menjalankan program tanpa masukan"
+        ],
+        a: 2
+      },
+      {
+        q: "Seorang siswa membuat langkah-langkah untuk menentukan bilangan terbesar dari tiga bilangan. Langkah pertama yang paling tepat adalah...",
+        o: [
+          "Langsung mencetak salah satu bilangan secara acak",
+          "Menghapus dua bilangan lainnya",
+          "Menentukan hasil tanpa membandingkan nilai",
+          "Menerima tiga bilangan sebagai masukan"
+        ],
+        a: 3
+      },
+      {
+        q: "Mengapa solusi masalah perlu dievaluasi setelah algoritma dijalankan?",
+        o: [
+          "Untuk memastikan hasil sesuai tujuan dan menemukan kekurangan yang perlu diperbaiki",
+          "Agar algoritma selalu menjadi lebih panjang",
+          "Agar hasil tidak dapat diperiksa",
+          "Untuk menghilangkan kebutuhan pengujian"
+        ],
+        a: 0
+      },
+      {
+        q: "Seorang siswa diminta membuat aplikasi sederhana untuk menghitung rata-rata nilai lima mata pelajaran. Pendekatan berpikir komputasional yang paling tepat adalah...",
+        o: [
+          "Menebak hasil tanpa membaca nilai",
+          "Mengidentifikasi input, menyusun langkah penjumlahan dan pembagian, lalu menguji hasil",
+          "Mengumpulkan nilai tanpa melakukan perhitungan",
+          "Membuat tampilan aplikasi tanpa menentukan prosesnya"
+        ],
+        a: 1
+      }
+
+    ];
+
+    // ====== FUNGSI ACAK (Fisher-Yates Shuffle) ======
+    function shuffleArray(arr) {
+      const shuffled = [...arr];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    // ====== AUDIO SYSTEM ======
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        catch (e) { console.warn('AudioContext error:', e); }
+      }
+      return audioCtx;
+    }
+
+    function unlockAudio() {
+      const ctx = initAudio();
+      if (!ctx) return;
+      if (ctx.state === 'suspended') ctx.resume();
+      try {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.frequency.value = 440;
+        g.gain.setValueAtTime(0.001, ctx.currentTime);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(); o.stop(ctx.currentTime + 0.05);
+      } catch (e) { }
+    }
+
+    function playTone(freq, dur, type = 'sine', vol = 0.3) {
+      const ctx = initAudio();
+      if (!ctx) return;
+      if (ctx.state === 'suspended') ctx.resume();
+      try {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = type; o.frequency.value = freq;
+        g.gain.setValueAtTime(vol, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(); o.stop(ctx.currentTime + dur);
+      } catch (e) { }
+    }
+
+    function suaraKlik() { playTone(800, 0.1, 'square', 0.2); }
+    function suaraBenar() {
+      playTone(523, 0.15, 'sine', 0.3);
+      setTimeout(() => playTone(659, 0.15, 'sine', 0.3), 150);
+      setTimeout(() => playTone(784, 0.3, 'sine', 0.3), 300);
+    }
+    function suaraSalah() {
+      playTone(300, 0.2, 'sawtooth', 0.25);
+      setTimeout(() => playTone(200, 0.4, 'sawtooth', 0.25), 200);
+    }
+
+    // ====== MUSIK LATAR ======
+    let musikOn = false, musikInterval;
+    const nadaMusik = [261, 329, 392, 329, 261, 392, 329, 261, 349, 293, 261, 329];
+    let idxNada = 0;
+
+    function toggleMusik() {
+      unlockAudio();
+      musikOn = !musikOn;
+      document.getElementById('musicBtn').textContent = musikOn ? '🔊' : '🔇';
+      if (musikOn) {
+        musikInterval = setInterval(() => {
+          playTone(nadaMusik[idxNada % nadaMusik.length], 0.4, 'triangle', 0.08);
+          idxNada++;
+        }, 500);
+      } else {
+        clearInterval(musikInterval);
+      }
+    }
+    document.getElementById('musicBtn').onclick = toggleMusik;
+
+    // ====== TEXT TO SPEECH ======
+    let voiceID = null;
+
+    function pilihVoiceIndonesia() {
+      const voices = speechSynthesis.getVoices();
+      if (voices.length === 0) return null;
+      let voice = voices.find(v => v.lang === 'id-ID') ||
+        voices.find(v => v.lang.startsWith('id')) ||
+        voices.find(v => v.lang === 'ms-MY') ||
+        voices.find(v => v.lang.startsWith('ms'));
+      if (voice) voiceID = voice;
+      return voice;
+    }
+
+    if ('speechSynthesis' in window) {
+      pilihVoiceIndonesia();
+      speechSynthesis.onvoiceschanged = pilihVoiceIndonesia;
+    }
+
+    function bicara(teks) {
+      if (!('speechSynthesis' in window)) return;
+      speechSynthesis.cancel();
+      try {
+        const u = new SpeechSynthesisUtterance(teks);
+        if (voiceID) u.voice = voiceID;
+        u.lang = 'id-ID';
+        u.rate = 0.95;
+        u.pitch = 1;
+        u.volume = 1;
+        speechSynthesis.speak(u);
+      } catch (e) { console.warn('Bicara error:', e); }
+    }
+
+    function hentikanSuara() {
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+      }
+    }
+
+    function testSuara() {
+      unlockAudio();
+      setTimeout(() => {
+        playTone(440, 0.3, 'sine', 0.3);
+        setTimeout(() => playTone(660, 0.3, 'sine', 0.3), 350);
+      }, 100);
+      setTimeout(() => bicara("Test suara berhasil. Selamat belajar!"), 200);
+      alert("🔊 Jika kamu mendengar suara beep dan bicara, berarti audio berfungsi!");
+    }
+
+    // ====== GAME LOGIC ======
+    let idx = 0, skor = 0, sudahDijawab = false;
+    let timeoutBacaSoal = null; // 🔑 Variabel untuk menyimpan ID timeout
+
+    function mulaiKuis() {
+      unlockAudio();
+
+      // Acak urutan soal setiap mulai kuis
+      soal = shuffleArray(soalAsli);
+      if ('speechSynthesis' in window) {
+        const u = new SpeechSynthesisUtterance(" ");
+        speechSynthesis.speak(u);
+      }
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('quizScreen').classList.remove('hidden');
+      tampilkanSoal();
+      if (!musikOn) toggleMusik();
+    }
+
+    function tampilkanSoal() {
+      sudahDijawab = false;
+
+      // 🔑 Batalkan timeout pembacaan soal sebelumnya (jika ada)
+      if (timeoutBacaSoal) {
+        clearTimeout(timeoutBacaSoal);
+        timeoutBacaSoal = null;
+      }
+      hentikanSuara(); // Stop semua suara yang sedang berjalan
+
+      const s = soal[idx];
+      document.getElementById('qNum').textContent = idx + 1;
+      document.getElementById('score').textContent = skor;
+      document.getElementById('progressFill').style.width = ((idx) / 50 * 100) + '%';
+      document.getElementById('questionText').textContent = (idx + 1) + ". " + s.q;
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('nextBtn').disabled = true;
+
+      const optDiv = document.getElementById('options');
+      optDiv.innerHTML = '';
+      const huruf = ['A', 'B', 'C', 'D'];
+      s.o.forEach((opsi, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.textContent = huruf[i] + ". " + opsi;
+        btn.addEventListener('click', () => pilihJawaban(i, btn));
+        optDiv.appendChild(btn);
+      });
+
+      document.getElementById('mainContainer').scrollTo({ top: 0, behavior: 'smooth' });
+
+      // 🔑 Simpan ID timeout agar bisa dibatalkan nanti
+      timeoutBacaSoal = setTimeout(() => {
+        if (!sudahDijawab) { // 🔑 Hanya baca jika belum dijawab
+          bicara(s.q + ". Pilihan: " + s.o.join(", "));
+        }
+        timeoutBacaSoal = null;
+      }, 500);
+    }
+
+    function bacaSoal() {
+      unlockAudio();
+      // 🔑 Batalkan timeout yang sedang berjalan
+      if (timeoutBacaSoal) {
+        clearTimeout(timeoutBacaSoal);
+        timeoutBacaSoal = null;
+      }
+      const s = soal[idx];
+      bicara(s.q + ". Pilihan: " + s.o.join(", "));
+    }
+
+    function pilihJawaban(pilihan, btn) {
+      if (sudahDijawab) return;
+      sudahDijawab = true;
+
+      unlockAudio();
+
+      // 🔑 KUNCI PERBAIKAN: Batalkan timeout pembacaan soal
+      if (timeoutBacaSoal) {
+        clearTimeout(timeoutBacaSoal);
+        timeoutBacaSoal = null;
+      }
+
+      // 🔑 Hentikan suara apapun yang sedang diputar
+      hentikanSuara();
+
+      // Baru mainkan suara klik
+      setTimeout(suaraKlik, 50);
+
+      const s = soal[idx];
+      const buttons = document.querySelectorAll('.option');
+      buttons.forEach(b => b.disabled = true);
+
+      const fb = document.getElementById('feedback');
+      if (pilihan === s.a) {
+        btn.classList.add('correct');
+        skor += 2;
+        setTimeout(suaraBenar, 200);
+        fb.textContent = '✅ Benar! +2 poin';
+        fb.className = 'feedback show benar';
+        // 🔑 Beri jeda agar suara efek selesai dulu baru bicara
+        setTimeout(() => {
+          if (sudahDijawab) bicara("Benar!");
+        }, 700);
+      } else {
+        btn.classList.add('wrong');
+        buttons[s.a].classList.add('correct');
+        setTimeout(suaraSalah, 200);
+        fb.textContent = '❌ Salah. Jawaban benar: ' + ['A', 'B', 'C', 'D'][s.a] + ". " + s.o[s.a];
+        fb.className = 'feedback show salah';
+        setTimeout(() => {
+          if (sudahDijawab) bicara("Salah. Jawaban yang benar adalah " + s.o[s.a]);
+        }, 700);
+      }
+
+      document.getElementById('score').textContent = skor;
+      document.getElementById('nextBtn').disabled = false;
+
+      setTimeout(() => {
+        fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+
+    function nextSoal() {
+      unlockAudio();
+      // 🔑 Hentikan suara feedback sebelum lanjut
+      hentikanSuara();
+      suaraKlik();
+      idx++;
+      if (idx >= soal.length) {
+        selesai();
+      } else {
+        tampilkanSoal();
+      }
+    }
+
+    function selesai() {
+      document.getElementById('quizScreen').classList.add('hidden');
+      document.getElementById('endScreen').classList.remove('hidden');
+      document.getElementById('finalScore').textContent = skor;
+      document.getElementById('mainContainer').scrollTo({ top: 0, behavior: 'smooth' });
+
+      let pesan = "";
+      if (skor >= 90) pesan = "Kamu Mendapatkan 🏆, Luar biasa! Kamu sangat menguasai materi!";
+      else if (skor >= 70) pesan = "Kamu dapat 👍, Bagus! Terus belajar ya!";
+      else if (skor >= 40) pesan = "Hasilnya Lumayan, semangat ya, masih perlu belajar lagi.";
+      else pesan = "📚 Jangan menyerah, ayo baca ulang materinya!";
+
+      document.getElementById('pesanAkhir').textContent = pesan;
+
+      if (skor >= 70) setTimeout(suaraBenar, 300);
+      setTimeout(() => bicara("Kuis selesai. Skor kamu " + skor + " dari 100. " + pesan), 800);
+    }
+  </script>
+</body>
+
+</html>
