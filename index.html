@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kuis Informatika (Berpikir Komputasional)- Kelas 9 </title>
+  <title>Kuis Informatika (Berpikir Komputasional)-Kelas 9</title>
   <style>
     * {
       box-sizing: border-box;
@@ -31,8 +31,6 @@
       /* IE 10 dan lama */
       user-select: none;
       /* Standar modern */
-
-
     }
 
     .created-by {
@@ -386,9 +384,61 @@
   </div>
 
   <script>
+
+    // ====== LAPORAN AKTIVITAS KE GOOGLE SPREADSHEET ======
+    // Ganti URL di bawah dengan URL Web App Google Apps Script yang berakhiran /exec.
+    const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbx16OflbXEh-gNZKUOfq4y2sE_-vDGbrt75-xJF6PMRXWRuEy05ojiGSLRtRZ0HD-JpMA/exec";
+
+    let sesiKuis = "";
+    try {
+      sesiKuis = sessionStorage.getItem("kuis_sesi_ipa") || "";
+      if (!sesiKuis) {
+        sesiKuis = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : "sesi-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+        sessionStorage.setItem("kuis_sesi_ipa", sesiKuis);
+      }
+    } catch (e) {
+      sesiKuis = "sesi-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+    }
+
+    function catatAktivitas(aktivitas, nilaiTambahan = {}) {
+      // PERBAIKAN: Mengecek apakah URL masih default/kosong menggunakan .includes()
+      if (!URL_APPS_SCRIPT || URL_APPS_SCRIPT.includes("https://script.google.com/macros/s/AKfycbx16OflbXEh-gNZKUOfq4y2sE_-vDGbrt75-xJF6PMRXWRuEy05ojiGSLRtRZ0HD-JpMA/execc")) {
+        console.warn("Laporan belum aktif. Isi URL_APPS_SCRIPT dengan URL Web App Apps Script yang valid.");
+        return;
+      }
+
+      const data = {
+        aktivitas: aktivitas,
+        halaman: "Kuis IPA - Pewarisan Sifat dan Bioteknologi",
+        url: location.href,
+        referrer: document.referrer || "",
+        sesi: sesiKuis,
+        perangkat: navigator.userAgent || "",
+        skor: nilaiTambahan.skor ?? "",
+        jumlahSoal: nilaiTambahan.jumlahSoal ?? 50,
+        jawabanBenar: nilaiTambahan.jawabanBenar ?? ""
+      };
+
+      // mode no-cors membuat respons tidak bisa dibaca browser, tetapi permintaan dikirim.
+      fetch(URL_APPS_SCRIPT, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(data),
+        keepalive: true
+      }).catch(err => console.warn("Gagal mengirim laporan aktivitas:", err));
+    }
+
+    // Catat kunjungan ketika halaman dibuka.
+    catatAktivitas("Halaman dibuka");
+
+
+
     // ====== 50 PERTANYAAN ======
     const soalAsli = [
-{
+      {
         q: "Apa yang dimaksud dengan berpikir komputasional?",
         o: [
           "Cara berpikir untuk menyelesaikan masalah secara sistematis",
@@ -888,8 +938,8 @@
         ],
         a: 1
       }
-
     ];
+
 
     // ====== FUNGSI ACAK (Fisher-Yates Shuffle) ======
     function shuffleArray(arr) {
@@ -1030,12 +1080,14 @@
 
       // Acak urutan soal setiap mulai kuis
       soal = shuffleArray(soalAsli);
+
       if ('speechSynthesis' in window) {
         const u = new SpeechSynthesisUtterance(" ");
         speechSynthesis.speak(u);
       }
       document.getElementById('startScreen').classList.add('hidden');
       document.getElementById('quizScreen').classList.remove('hidden');
+      catatAktivitas("Mulai kuis");
       tampilkanSoal();
       if (!musikOn) toggleMusik();
     }
@@ -1170,10 +1222,19 @@
 
       document.getElementById('pesanAkhir').textContent = pesan;
 
+      // Skor pada kuis ini bertambah 2 poin per jawaban benar.
+      const jumlahJawabanBenar = Math.round(skor / 2);
+      catatAktivitas("Kuis selesai", {
+        skor: skor,
+        jumlahSoal: soal.length,
+        jawabanBenar: jumlahJawabanBenar
+      });
+
       if (skor >= 70) setTimeout(suaraBenar, 300);
       setTimeout(() => bicara("Kuis selesai. Skor kamu " + skor + " dari 100. " + pesan), 800);
     }
-        // 1. Matikan Klik Kanan
+
+    // 1. Matikan Klik Kanan
     document.addEventListener('contextmenu', event => event.preventDefault());
 
     // 2. Matikan Shortcut Keyboard (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
@@ -1190,7 +1251,7 @@
       if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { // Ctrl+U (View Source)
         return false;
       }
-}
+    }
   </script>
 </body>
 
