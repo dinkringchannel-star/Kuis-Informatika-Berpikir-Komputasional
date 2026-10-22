@@ -25,6 +25,14 @@
       padding: 20px 15px;
       font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
       color: #222;
+      -webkit-user-select: none;
+      /* Safari */
+      -ms-user-select: none;
+      /* IE 10 dan lama */
+      user-select: none;
+      /* Standar modern */
+
+
     }
 
     .created-by {
@@ -1165,6 +1173,24 @@
       if (skor >= 70) setTimeout(suaraBenar, 300);
       setTimeout(() => bicara("Kuis selesai. Skor kamu " + skor + " dari 100. " + pesan), 800);
     }
+        // 1. Matikan Klik Kanan
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // 2. Matikan Shortcut Keyboard (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
+    document.onkeydown = function (e) {
+      if (e.keyCode == 123) { // F12
+        return false;
+      }
+      if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { // Ctrl+Shift+I
+        return false;
+      }
+      if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { // Ctrl+Shift+J
+        return false;
+      }
+      if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { // Ctrl+U (View Source)
+        return false;
+      }
+}
   </script>
 </body>
 
